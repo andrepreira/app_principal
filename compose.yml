@@ -1,10 +1,19 @@
 services:
+  backend_flask:
+    build: 
+      context: ./backend/flask
+      dockerfile: Dockerfile
+    command: ["app"]
+    container_name: backend_flask
+    restart: unless-stopped
+    tty: true
+
   #PHP Service
   backend_laravel:
     build:
       context: ./backend/laravel
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: backend_laravel
     restart: unless-stopped
     tty: true
     environment:
@@ -31,9 +40,6 @@ services:
 
   #Nginx Service
   webserver:
-    depends_on:
-      - backend
-      - frontend
     build:
       context: ./.docker/nginx
       dockerfile: Dockerfile
@@ -56,6 +62,8 @@ services:
     ports: ["5429:5432"]  
     volumes:  
       - "./.docker/postgres:/var/lib/postgresql/data"
+    networks:
+      - app-network
 
 #Docker Networks
 networks:
