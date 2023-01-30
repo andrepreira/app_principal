@@ -1,19 +1,25 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@172.25.0.4:5432/site'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/site'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80))
-    body = db.Column(db.Text)
+    title = db.Column(db.String(120), nullable=False)
+    body = db.Column(db.Text, nullable=False)
 
-@app.route('/')
-def index():
+    def __repr__(self):
+        return f'<Post {self.id} {self.title}>'
+
+
+@app.route('/posts', methods=['GET'])
+def get_posts():
     posts = Post.query.all()
-    return render_template('index.html', posts=posts)
+    return jsonify([post.__dict__ for post in posts])
 
 if __name__ == '__main__':
     with app.app_context():

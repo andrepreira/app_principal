@@ -5,9 +5,13 @@ services:
       dockerfile: Dockerfile
     command: ["app"]
     container_name: backend_flask
+    ports:
+      - "5000:5000"
     restart: unless-stopped
     tty: true
-
+    networks:
+      - app-network
+      
   #PHP Service
   backend_laravel:
     build:
@@ -35,19 +39,6 @@ services:
     volumes:
       - /app/node_modules
       - ./frontend:/var/www/html/
-    networks:
-      - app-network
-
-  #Nginx Service
-  webserver:
-    build:
-      context: ./.docker/nginx
-      dockerfile: Dockerfile
-    container_name: webserver
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "81:80"
     networks:
       - app-network
   
