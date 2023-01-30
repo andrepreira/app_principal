@@ -1,4 +1,5 @@
 .docker/postgres/*
 .vscode
+.venv
 
 !.gitkeep
