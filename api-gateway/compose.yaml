@@ -1,0 +1,22 @@
+services:
+  traefik:
+    image: traefik:2.9.4
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes: 
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.toml:/traefik.toml"
+    networks:
+      - traefik
+      - web
+
+networks:
+  traefik:
+    name: traefik
+    internal: true
+
+  web:
+    name: web
