@@ -1,19 +1,30 @@
 services:
   backend:
     build: ./backend
-    ports:
-      - "5000:5000"
-    environment:
-      - OCI_BUCKET_NAME=raw-storage-data
-      - OCI_NAMESPACE=id916ejdksls
-      - OCI_CONFIG_FILE=/app/config/config
+    env_file: ["./backend/env.dev"]
     volumes:
       - ./backend:/app
+    networks:
+      - traefik
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/backend`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=5000"
   frontend:
     build: ./frontend
-    ports:
-      - "8080:8080"
-    environment:
-      - VUE_APP_BACKEND_URL=http://backend:5000
     volumes:
       - ./frontend:/app
+    networks:
+      - traefik
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8081"
+networks:
+  traefik:
+    name: traefik
+
+  web:
+    name: web
