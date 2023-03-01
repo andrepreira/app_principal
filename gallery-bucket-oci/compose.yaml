@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - OCI_BUCKET_NAME=raw-storage-data
+      - OCI_NAMESPACE=id916ejdksls
+      - OCI_CONFIG_FILE=/app/config/config
+    volumes:
+      - ./backend:/app
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    environment:
+      - VUE_APP_BACKEND_URL=http://backend:5000
+    volumes:
+      - ./frontend:/app
